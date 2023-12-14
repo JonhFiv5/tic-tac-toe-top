@@ -1,8 +1,11 @@
 function createGameboard() {
-    const board = [];
+    let board;
     const DEFAULT_CELL_VALUE = null;
+    let turnsLeft;
 
     const generateBoard = () => {
+        board = [];
+        turnsLeft = 9;
         for (let i = 0; i < 3; i++) {
             board.push([
                 DEFAULT_CELL_VALUE,
@@ -19,7 +22,11 @@ function createGameboard() {
     const assignPlayerMove = (row, column, playerSymbol) => {
         if (board[row][column] === null) {
             board[row][column] = playerSymbol;
+            turnsLeft -= 1;
+            return true;
         }
+
+        return false;
     };
 
     const verifyVictory = (playerSymbol) => {
@@ -52,7 +59,15 @@ function createGameboard() {
         return rowVictory || colVictory;
     };
 
-    return { getGameboard, assignPlayerMove, verifyVictory, generateBoard };
+    const verifyDraw = () => turnsLeft === 0;
+
+    return {
+        getGameboard,
+        assignPlayerMove,
+        verifyVictory,
+        verifyDraw,
+        generateBoard,
+    };
 }
 
 function createGame() {
@@ -74,17 +89,35 @@ function createGame() {
     const printGameboard = () => console.table(gameboard.getGameboard());
 
     const playTurn = (row, column) => {
-        gameboard.assignPlayerMove(row, column, currentPlayer.symbol);
+        const successfulMove = gameboard.assignPlayerMove(
+            row,
+            column,
+            currentPlayer.symbol
+        );
+
+        if (!successfulMove) {
+            console.log('The cell is not empty, try again.');
+            return;
+        }
+
         printGameboard();
         const playerWin = gameboard.verifyVictory(currentPlayer.symbol);
         if (playerWin) {
             console.log(`${currentPlayer.name} wins!\nStarting a new game...`);
             currentPlayer.score += 1;
             gameboard.generateBoard();
-        } else {
-            currentPlayer =
-                currentPlayer.name === 'player one' ? players[1] : players[0];
+            return;
         }
+
+        const draw = gameboard.verifyDraw();
+        if (draw) {
+            console.log("It's a draw! No winners, no losers.");
+            gameboard.generateBoard();
+            return;
+        }
+
+        currentPlayer =
+            currentPlayer.name === 'player one' ? players[1] : players[0];
     };
 
     const printCurrentScore = () =>
