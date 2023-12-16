@@ -137,6 +137,7 @@ function createGame() {
     const gameboardArray = gameboard.getGameboard();
     const gameboardContainer = document.querySelector('.gameboard-container');
     const newGameButton = document.querySelector('#new-game-button');
+    const gameInfo = document.querySelector('#info');
     let gameEnded = false;
 
     const renderBoard = () => {
@@ -149,16 +150,25 @@ function createGame() {
                     if (!gameEnded) {
                         const currentPlayer = game.getCurrentPlayer();
                         const moveResponse = game.playTurn(row, column);
-                        switch (moveResponse) {
-                            case 'Victory':
-                            case 'Draw':
-                                gameEnded = true;
-                                newGameButton.removeAttribute('hidden');
-                            case 'Next turn':
-                                boardButton.innerText = currentPlayer.symbol;
-                                break;
-                            default:
-                                break;
+
+                        if (moveResponse !== 'Cell is not empty') {
+                            boardButton.innerText = currentPlayer.symbol;
+                        }
+
+                        if (moveResponse === 'Victory') {
+                            gameEnded = true;
+                            newGameButton.removeAttribute('hidden');
+                            gameInfo.textContent = `${currentPlayer.name} wins!`;
+                        } else if (moveResponse === 'Draw') {
+                            gameEnded = true;
+                            newGameButton.removeAttribute('hidden');
+                            gameInfo.textContent = "It's a draw.";
+                        } else if (moveResponse === 'Next turn') {
+                            const nextPlayer =
+                                currentPlayer.name === 'player one'
+                                    ? 'player two'
+                                    : 'player one';
+                            gameInfo.textContent = `${nextPlayer} turn`;
                         }
                     }
                 });
@@ -168,6 +178,7 @@ function createGame() {
     };
 
     const resetBoard = () => {
+        gameInfo.textContent = 'Player one turn';
         gameEnded = false;
         const boardButtons = document.querySelectorAll('.board-button');
         boardButtons.forEach((button) => (button.innerHTML = ''));
