@@ -1,0 +1,10 @@
+.gameboard-container {
+    display: grid;
+    grid-template: repeat(3, 50px) / repeat(3, 50px);
+}
+
+.board-button {
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+}

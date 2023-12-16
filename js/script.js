@@ -87,6 +87,7 @@ function createGame() {
     let currentPlayer = players[0];
 
     const printGameboard = () => console.table(gameboard.getGameboard());
+    const getCurrentPlayer = () => currentPlayer;
 
     const playTurn = (row, column) => {
         const successfulMove = gameboard.assignPlayerMove(
@@ -97,7 +98,7 @@ function createGame() {
 
         if (!successfulMove) {
             console.log('The cell is not empty, try again.');
-            return;
+            return 'Cell is not empty';
         }
 
         printGameboard();
@@ -106,18 +107,20 @@ function createGame() {
             console.log(`${currentPlayer.name} wins!\nStarting a new game...`);
             currentPlayer.score += 1;
             gameboard.generateBoard();
-            return;
+            return 'Victory';
         }
 
         const draw = gameboard.verifyDraw();
         if (draw) {
             console.log("It's a draw! No winners, no losers.");
             gameboard.generateBoard();
-            return;
+            return 'Draw';
         }
 
         currentPlayer =
             currentPlayer.name === 'player one' ? players[1] : players[0];
+
+        return 'Next turn';
     };
 
     const printCurrentScore = () =>
@@ -125,7 +128,47 @@ function createGame() {
             `Player one: ${players[0].score}\nPlayer two: ${players[1].score}`
         );
 
-    return { playTurn, printGameboard, printCurrentScore };
+    return { playTurn, printGameboard, printCurrentScore, getCurrentPlayer };
 }
 
-const game = createGame();
+(function createLayout() {
+    const game = createGame();
+    const gameboard = createGameboard();
+    const gameboardArray = gameboard.getGameboard();
+    const gameboardContainer = document.querySelector('.gameboard-container');
+    let gameEnded = false;
+
+    const renderBoard = () => {
+        for (let row = 0; row < 3; row++) {
+            for (let column = 0; column < 3; column++) {
+                const boardButton = document.createElement('button');
+                boardButton.className = 'board-button';
+                boardButton.innerText = gameboardArray[row][column];
+                boardButton.addEventListener('click', () => {
+                    if (!gameEnded) {
+                        const currentPlayer = game.getCurrentPlayer();
+                        const moveResponse = game.playTurn(row, column);
+                        switch (moveResponse) {
+                            case 'Victory':
+                            case 'Draw':
+                                gameEnded = true;
+                            case 'Next turn':
+                                boardButton.innerText = currentPlayer.symbol;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+                gameboardContainer.appendChild(boardButton);
+            }
+        }
+    };
+
+    const resetBoard = () => {
+        const boardButtons = document.querySelectorAll('.board-button');
+        boardButtons.forEach((button) => (button.innerHTML = 'i'));
+    };
+
+    renderBoard();
+})();
