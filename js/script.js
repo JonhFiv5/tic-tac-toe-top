@@ -88,6 +88,12 @@ function createGame() {
 
     const printGameboard = () => console.table(gameboard.getGameboard());
     const getCurrentPlayer = () => currentPlayer;
+    const getScores = () => {
+        return {
+            playerOne: players[0].score,
+            playerTwo: players[1].score,
+        };
+    };
 
     const playTurn = (row, column) => {
         const successfulMove = gameboard.assignPlayerMove(
@@ -128,7 +134,13 @@ function createGame() {
             `Player one: ${players[0].score}\nPlayer two: ${players[1].score}`
         );
 
-    return { playTurn, printGameboard, printCurrentScore, getCurrentPlayer };
+    return {
+        playTurn,
+        printGameboard,
+        printCurrentScore,
+        getCurrentPlayer,
+        getScores,
+    };
 }
 
 (function createLayout() {
@@ -138,7 +150,12 @@ function createGame() {
     const gameboardContainer = document.querySelector('.gameboard-container');
     const newGameButton = document.querySelector('#new-game-button');
     const gameInfo = document.querySelector('#info');
+    const playerOneScore = document.querySelector('#player-one-score');
+    const playerTwoScore = document.querySelector('#player-two-score');
     let gameEnded = false;
+
+    playerOneScore.textContent = 0;
+    playerTwoScore.textContent = 0;
 
     const renderBoard = () => {
         for (let row = 0; row < 3; row++) {
@@ -159,6 +176,9 @@ function createGame() {
                             gameEnded = true;
                             newGameButton.removeAttribute('hidden');
                             gameInfo.textContent = `${currentPlayer.name} wins!`;
+                            const scores = game.getScores();
+                            playerOneScore.textContent = scores.playerOne;
+                            playerTwoScore.textContent = scores.playerTwo;
                         } else if (moveResponse === 'Draw') {
                             gameEnded = true;
                             newGameButton.removeAttribute('hidden');
