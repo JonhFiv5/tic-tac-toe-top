@@ -136,6 +136,7 @@ function createGame() {
     const gameboard = createGameboard();
     const gameboardArray = gameboard.getGameboard();
     const gameboardContainer = document.querySelector('.gameboard-container');
+    const newGameButton = document.querySelector('#new-game-button');
     let gameEnded = false;
 
     const renderBoard = () => {
@@ -152,6 +153,7 @@ function createGame() {
                             case 'Victory':
                             case 'Draw':
                                 gameEnded = true;
+                                newGameButton.removeAttribute('hidden');
                             case 'Next turn':
                                 boardButton.innerText = currentPlayer.symbol;
                                 break;
@@ -166,9 +168,15 @@ function createGame() {
     };
 
     const resetBoard = () => {
+        gameEnded = false;
         const boardButtons = document.querySelectorAll('.board-button');
-        boardButtons.forEach((button) => (button.innerHTML = 'i'));
+        boardButtons.forEach((button) => (button.innerHTML = ''));
     };
+
+    newGameButton.addEventListener('click', () => {
+        resetBoard();
+        newGameButton.setAttribute('hidden', true);
+    });
 
     renderBoard();
 })();
