@@ -157,6 +157,17 @@ function createGame() {
     playerOneScore.textContent = 0;
     playerTwoScore.textContent = 0;
 
+    // Modal
+    const modal = document.querySelector('#endgame-modal');
+    const btnClosemodal = document.querySelector('#btn-close-modal');
+    btnClosemodal.addEventListener('click', () => modal.close());
+    const modalMessage = document.querySelector('#modal-message');
+
+    const displayModal = (message) => {
+        modalMessage.textContent = message;
+        modal.showModal();
+    };
+
     const renderBoard = () => {
         for (let row = 0; row < 3; row++) {
             for (let column = 0; column < 3; column++) {
@@ -175,14 +186,14 @@ function createGame() {
                         if (moveResponse === 'Victory') {
                             gameEnded = true;
                             newGameButton.removeAttribute('hidden');
-                            gameInfo.textContent = `${currentPlayer.name} wins!`;
+                            displayModal(`${currentPlayer.name} wins!`);
                             const scores = game.getScores();
                             playerOneScore.textContent = scores.playerOne;
                             playerTwoScore.textContent = scores.playerTwo;
                         } else if (moveResponse === 'Draw') {
                             gameEnded = true;
                             newGameButton.removeAttribute('hidden');
-                            gameInfo.textContent = "It's a draw.";
+                            displayModal("It's a draw.");
                         } else if (moveResponse === 'Next turn') {
                             const nextPlayer =
                                 currentPlayer.name === 'player one'
