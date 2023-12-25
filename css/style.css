@@ -66,3 +66,21 @@ h1 {
 .hidden {
     visibility: hidden;
 }
+
+#endgame-modal {
+    background-color: #fbff00;
+    border-color: rgb(0, 167, 69);
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    color: #005345;
+}
+
+#modal-message {
+    font-size: 30px;
+}
+
+#btn-close-modal {
+    margin-top: 10px;
+    cursor: pointer;
+}
