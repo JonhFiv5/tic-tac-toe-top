@@ -185,14 +185,14 @@ function createGame() {
 
                         if (moveResponse === 'Victory') {
                             gameEnded = true;
-                            newGameButton.removeAttribute('hidden');
+                            newGameButton.className = '';
                             displayModal(`${currentPlayer.name} wins!`);
                             const scores = game.getScores();
                             playerOneScore.textContent = scores.playerOne;
                             playerTwoScore.textContent = scores.playerTwo;
                         } else if (moveResponse === 'Draw') {
                             gameEnded = true;
-                            newGameButton.removeAttribute('hidden');
+                            newGameButton.className = '';
                             displayModal("It's a draw.");
                         } else if (moveResponse === 'Next turn') {
                             const nextPlayer =
@@ -217,7 +217,7 @@ function createGame() {
 
     newGameButton.addEventListener('click', () => {
         resetBoard();
-        newGameButton.setAttribute('hidden', true);
+        newGameButton.className = 'hidden';
     });
 
     renderBoard();
