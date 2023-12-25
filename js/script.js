@@ -70,24 +70,21 @@ function createGameboard() {
     };
 }
 
+function createPlayer(name, symbol) {
+    return { name, symbol, score: 0 };
+}
+
 function createGame() {
     const gameboard = createGameboard();
     const players = [
-        {
-            name: 'player one',
-            symbol: 'X',
-            score: 0,
-        },
-        {
-            name: 'player two',
-            symbol: 'O',
-            score: 0,
-        },
+        createPlayer('Player One', 'X'),
+        createPlayer('Player Two', '0'),
     ];
     let currentPlayer = players[0];
 
     const printGameboard = () => console.table(gameboard.getGameboard());
     const getCurrentPlayer = () => currentPlayer;
+    const getPlayers = () => players;
     const getScores = () => {
         return {
             playerOne: players[0].score,
@@ -124,14 +121,14 @@ function createGame() {
         }
 
         currentPlayer =
-            currentPlayer.name === 'player one' ? players[1] : players[0];
+            currentPlayer.name === players[0].name ? players[1] : players[0];
 
         return 'Next turn';
     };
 
     const printCurrentScore = () =>
         console.log(
-            `Player one: ${players[0].score}\nPlayer two: ${players[1].score}`
+            `${players[0].name}: ${players[0].score}\n${players[1].name}: ${players[1].score}`
         );
 
     return {
@@ -139,6 +136,7 @@ function createGame() {
         printGameboard,
         printCurrentScore,
         getCurrentPlayer,
+        getPlayers,
         getScores,
     };
 }
@@ -176,6 +174,7 @@ function createGame() {
                 boardButton.innerText = gameboardArray[row][column];
                 boardButton.addEventListener('click', () => {
                     if (!gameEnded) {
+                        const [playerOne, playerTwo] = game.getPlayers();
                         const currentPlayer = game.getCurrentPlayer();
                         const moveResponse = game.playTurn(row, column);
 
@@ -196,10 +195,10 @@ function createGame() {
                             displayModal("It's a draw.");
                         } else if (moveResponse === 'Next turn') {
                             const nextPlayer =
-                                currentPlayer.name === 'player one'
-                                    ? 'player two'
-                                    : 'player one';
-                            gameInfo.textContent = `${nextPlayer} turn`;
+                                currentPlayer.name === playerOne.name
+                                    ? playerTwo
+                                    : playerOne;
+                            gameInfo.textContent = `${nextPlayer.name} turn (${nextPlayer.symbol})`;
                         }
                     }
                 });
