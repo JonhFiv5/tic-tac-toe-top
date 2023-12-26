@@ -85,6 +85,8 @@ function createGame() {
 
     const printGameboard = () => console.table(gameboard.getGameboard());
     const getCurrentPlayer = () => currentPlayer;
+    const getNextMoveInfo = () =>
+        `${currentPlayer.name}'s turn (${currentPlayer.symbol})`;
     const getPlayers = () => players;
     const getScores = () => {
         return {
@@ -137,6 +139,7 @@ function createGame() {
         printGameboard,
         printCurrentScore,
         getCurrentPlayer,
+        getNextMoveInfo,
         getPlayers,
         getScores,
         gameEnded,
@@ -155,6 +158,8 @@ function createLayout() {
     const gameboard = createGameboard();
     const gameboardArray = gameboard.getGameboard();
 
+    // Initializing some elements
+    gameInfo.textContent = game.getNextMoveInfo();
     playerOneScore.textContent = 0;
     playerTwoScore.textContent = 0;
 
@@ -195,7 +200,7 @@ function createLayout() {
                     currentPlayer.name === playerOne.name
                         ? playerTwo
                         : playerOne;
-                gameInfo.textContent = `${nextPlayer.name} turn (${nextPlayer.symbol})`;
+                gameInfo.textContent = game.getNextMoveInfo();
             }
         }
     };
@@ -215,7 +220,7 @@ function createLayout() {
     };
 
     const resetBoard = () => {
-        gameInfo.textContent = 'Player one turn';
+        gameInfo.textContent = game.getNextMoveInfo();
         game.gameEnded = false;
         const boardButtons = document.querySelectorAll('.board-button');
         boardButtons.forEach((button) => (button.innerHTML = ''));
