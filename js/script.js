@@ -81,6 +81,7 @@ function createGame() {
         createPlayer('Player Two', '0'),
     ];
     let currentPlayer = players[0];
+    let gameEnded = false;
 
     const printGameboard = () => console.table(gameboard.getGameboard());
     const getCurrentPlayer = () => currentPlayer;
@@ -138,19 +139,21 @@ function createGame() {
         getCurrentPlayer,
         getPlayers,
         getScores,
+        gameEnded,
     };
 }
 
-(function createLayout() {
-    const game = createGame();
-    const gameboard = createGameboard();
-    const gameboardArray = gameboard.getGameboard();
+function createLayout() {
+    // Getting layout elements
     const gameboardContainer = document.querySelector('.gameboard-container');
     const newGameButton = document.querySelector('#new-game-button');
     const gameInfo = document.querySelector('#info');
     const playerOneScore = document.querySelector('#player-one-score');
     const playerTwoScore = document.querySelector('#player-two-score');
-    let gameEnded = false;
+    // Creating game objects
+    const game = createGame();
+    const gameboard = createGameboard();
+    const gameboardArray = gameboard.getGameboard();
 
     playerOneScore.textContent = 0;
     playerTwoScore.textContent = 0;
@@ -166,42 +169,46 @@ function createGame() {
         modal.showModal();
     };
 
+    const buttonCellAction = (button, row, column) => {
+        if (!game.gameEnded) {
+            const [playerOne, playerTwo] = game.getPlayers();
+            const currentPlayer = game.getCurrentPlayer();
+            const moveResponse = game.playTurn(row, column);
+
+            if (moveResponse !== 'Cell is not empty') {
+                button.innerText = currentPlayer.symbol;
+            }
+
+            if (moveResponse === 'Victory') {
+                game.gameEnded = true;
+                newGameButton.className = '';
+                displayModal(`${currentPlayer.name} wins!`);
+                const scores = game.getScores();
+                playerOneScore.textContent = scores.playerOne;
+                playerTwoScore.textContent = scores.playerTwo;
+            } else if (moveResponse === 'Draw') {
+                game.gameEnded = true;
+                newGameButton.className = '';
+                displayModal("It's a draw.");
+            } else if (moveResponse === 'Next turn') {
+                const nextPlayer =
+                    currentPlayer.name === playerOne.name
+                        ? playerTwo
+                        : playerOne;
+                gameInfo.textContent = `${nextPlayer.name} turn (${nextPlayer.symbol})`;
+            }
+        }
+    };
+
     const renderBoard = () => {
         for (let row = 0; row < 3; row++) {
             for (let column = 0; column < 3; column++) {
                 const boardButton = document.createElement('button');
                 boardButton.className = 'board-button';
                 boardButton.innerText = gameboardArray[row][column];
-                boardButton.addEventListener('click', () => {
-                    if (!gameEnded) {
-                        const [playerOne, playerTwo] = game.getPlayers();
-                        const currentPlayer = game.getCurrentPlayer();
-                        const moveResponse = game.playTurn(row, column);
-
-                        if (moveResponse !== 'Cell is not empty') {
-                            boardButton.innerText = currentPlayer.symbol;
-                        }
-
-                        if (moveResponse === 'Victory') {
-                            gameEnded = true;
-                            newGameButton.className = '';
-                            displayModal(`${currentPlayer.name} wins!`);
-                            const scores = game.getScores();
-                            playerOneScore.textContent = scores.playerOne;
-                            playerTwoScore.textContent = scores.playerTwo;
-                        } else if (moveResponse === 'Draw') {
-                            gameEnded = true;
-                            newGameButton.className = '';
-                            displayModal("It's a draw.");
-                        } else if (moveResponse === 'Next turn') {
-                            const nextPlayer =
-                                currentPlayer.name === playerOne.name
-                                    ? playerTwo
-                                    : playerOne;
-                            gameInfo.textContent = `${nextPlayer.name} turn (${nextPlayer.symbol})`;
-                        }
-                    }
-                });
+                boardButton.addEventListener('click', () =>
+                    buttonCellAction(boardButton, row, column)
+                );
                 gameboardContainer.appendChild(boardButton);
             }
         }
@@ -209,7 +216,7 @@ function createGame() {
 
     const resetBoard = () => {
         gameInfo.textContent = 'Player one turn';
-        gameEnded = false;
+        game.gameEnded = false;
         const boardButtons = document.querySelectorAll('.board-button');
         boardButtons.forEach((button) => (button.innerHTML = ''));
     };
@@ -219,5 +226,9 @@ function createGame() {
         newGameButton.className = 'hidden';
     });
 
-    renderBoard();
-})();
+    return { renderBoard };
+}
+
+// Starts game
+const gameLayout = createLayout();
+gameLayout.renderBoard();
