@@ -1,13 +1,21 @@
+:root {
+    --yellow: #fbff00;
+    --dark-blue: #2f484d;
+    --dark-green: #005345;
+    --light-green: #00a745;
+}
+
 body {
-    background-color: #2f484d;
-    color: white;
+    background-color: var(--dark-blue);
+    color: var(--yellow);
     font-weight: bold;
     font-family: sans-serif;
 }
 
 h1 {
-    font-size: 30px;
+    font-size: 35px;
     margin-top: 10px;
+    text-shadow: 1px 1px 5px var(--light-green);
 }
 
 .container {
@@ -23,6 +31,7 @@ h1 {
     align-items: center;
     margin-top: 30px;
     margin-bottom: 30px;
+    font-size: 18px;
 }
 
 #score {
@@ -40,27 +49,27 @@ h1 {
     font-size: 4rem;
     font-weight: bold;
     cursor: pointer;
-    background-color: #005345;
-    color: #fbff00;
-    text-shadow: 0px 0px 2px rgb(255, 255, 255);
-    border: 1px solid rgb(0, 167, 69);
+    background-color: var(--dark-green);
+    color: var(--yellow);
+    text-shadow: 0px 0px 2px white;
+    border: 1px solid var(--light-green);
 }
 
 #new-game-button {
     height: 30px;
-    border: 1px solid #005345;
-    background-color: #fbff00;
-    color: #005345;
+    border: 1px solid var(--dark-green);
+    background-color: var(--yellow);
+    color: var(--dark-green);
     font-weight: bold;
     font-size: 20px;
     border-radius: 10px;
     cursor: pointer;
-    border: 1px solid yellow;
+    border: 1px solid var(--yellow);
 }
 
 #new-game-button:hover {
-    background-color: #005345;
-    color: #fbff00;
+    background-color: var(--dark-green);
+    color: var(--yellow);
 }
 
 .hidden {
@@ -68,12 +77,12 @@ h1 {
 }
 
 #endgame-modal {
-    background-color: #fbff00;
-    border-color: rgb(0, 167, 69);
+    background-color: var(--yellow);
+    border-color: var(--light-green);
     border-radius: 10px;
     width: 300px;
     text-align: center;
-    color: #005345;
+    color: var(--dark-green);
 }
 
 #modal-message {
